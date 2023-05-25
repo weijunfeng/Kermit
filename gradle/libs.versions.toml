@@ -5,7 +5,7 @@ targetSdk = "33"
 compileSdk = "33"
 
 # Dependencies
-kotlin = "1.8.0"
+kotlin = "1.6.21"
 binaryCompatability = "0.11.0"
 
 androidx-core = "1.8.0"
@@ -20,8 +20,8 @@ android-library = "7.2.2"
 
 google-services = "4.3.10"
 
-stately = "2.0.0-rc3"
-testhelp = "0.6.5"
+stately = "1.2.1"
+testhelp = "0.5.5"
 
 crashkios = "0.8.2"
 bugsnag = "5.26.0"

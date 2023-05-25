@@ -13,6 +13,7 @@
 
 plugins {
     id("com.android.library")
+    id("maven-publish")
     kotlin("multiplatform")
 }
 
@@ -35,7 +36,7 @@ kotlin {
     watchosArm32()
     watchosArm64()
     watchosSimulatorArm64()
-    watchosDeviceArm64()
+//    watchosDeviceArm64()
     watchosX86()
     watchosX64()
     tvosArm64()
@@ -48,10 +49,10 @@ kotlin {
     linuxArm32Hfp()
     linuxMips32()
 
-    androidNativeArm32()
-    androidNativeArm64()
-    androidNativeX86()
-    androidNativeX64()
+//    androidNativeArm32()
+//    androidNativeArm64()
+//    androidNativeX86()
+//    androidNativeX64()
 
     val commonMain by sourceSets.getting
     val commonTest by sourceSets.getting
@@ -102,3 +103,23 @@ android {
 }
 
 apply(plugin = "com.vanniktech.maven.publish")
+
+
+publishing {
+    repositories {
+        // 发布到本地
+        maven {
+            name = "MavenLocalRepo"
+            url = uri("./build/repo")
+        }
+        maven {
+            name = "release"
+            setUrl("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = project.providers.gradleProperty("mavenCentralUsername").get()
+                password = project.providers.gradleProperty("mavenCentralPassword").get()
+            }
+        }
+    }
+}
+
