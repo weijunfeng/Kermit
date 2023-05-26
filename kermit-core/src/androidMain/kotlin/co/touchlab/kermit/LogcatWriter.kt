@@ -19,28 +19,27 @@ class LogcatWriter(private val messageStringFormatter: MessageStringFormatter = 
     // When running unit tests, Log calls will fail. Back up to a common writer
     private val testWriter: CommonWriter = CommonWriter(messageStringFormatter)
 
+    private fun getSeverity(severity: Severity) = when (severity) {
+        Severity.Verbose -> Log.VERBOSE
+        Severity.Debug -> Log.DEBUG
+        Severity.Info -> Log.INFO
+        Severity.Warn -> Log.WARN
+        Severity.Error -> Log.ERROR
+        Severity.Assert -> Log.ASSERT
+    }
+
     override fun log(severity: Severity, message: String, tag: String, throwable: Throwable?) {
         val formattedMessage = messageStringFormatter.formatMessage(null, null, Message(message))
         try {
-            if(throwable == null){
-                when(severity){
-                    Severity.Verbose -> Log.v(tag, formattedMessage)
-                    Severity.Debug -> Log.d(tag, formattedMessage)
-                    Severity.Info -> Log.i(tag, formattedMessage)
-                    Severity.Warn -> Log.w(tag, formattedMessage)
-                    Severity.Error -> Log.e(tag, formattedMessage)
-                    Severity.Assert -> Log.wtf(tag, formattedMessage)
+            // 使用 Log.println 解决部分设备无法输出debug日志问题
+            val stackTraceString = Log.getStackTraceString(throwable)
+            Log.println(
+                getSeverity(severity), tag, if (stackTraceString.isEmpty()) {
+                    formattedMessage
+                } else {
+                    formattedMessage + '\n' + stackTraceString
                 }
-            }else{
-                when(severity){
-                    Severity.Verbose -> Log.v(tag, formattedMessage, throwable)
-                    Severity.Debug -> Log.d(tag, formattedMessage, throwable)
-                    Severity.Info -> Log.i(tag, formattedMessage, throwable)
-                    Severity.Warn -> Log.w(tag, formattedMessage, throwable)
-                    Severity.Error -> Log.e(tag, formattedMessage, throwable)
-                    Severity.Assert -> Log.wtf(tag, formattedMessage, throwable)
-                }
-            }
+            )
         } catch (e: Exception) {
             testWriter.log(severity, message, tag, throwable)
         }
