@@ -33,9 +33,14 @@ class LogcatWriter(private val messageStringFormatter: MessageStringFormatter = 
         try {
             // 使用 Log.println 解决部分设备无法输出debug日志问题
             val stackTraceString = Log.getStackTraceString(throwable)
+            if (formattedMessage.isEmpty() && stackTraceString.isEmpty()) {
+                return
+            }
             Log.println(
                 getSeverity(severity), tag, if (stackTraceString.isEmpty()) {
                     formattedMessage
+                } else if (formattedMessage.isEmpty()) {
+                    stackTraceString
                 } else {
                     formattedMessage + '\n' + stackTraceString
                 }
